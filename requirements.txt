@@ -1,0 +1,6 @@
+ollama
+gradio
+pandas
+scikit-learn
+matplotlib
+seaborn

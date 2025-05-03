@@ -1,0 +1,41 @@
+correo,categoria_real,prediccion,correcto,prompt
+Te invito a la fiesta del sábado,Personal,otro,False,Estilo original
+Recordatorio de reunión con cliente,Trabajo,otro,False,Estilo original
+¡Compra ahora y recibe 50% de descuento!,Publicidad,publicidad,True,Estilo original
+"Has ganado un iPhone, haz clic aquí",Spam,spam,True,Estilo original
+¿Podemos almorzar mañana?,Personal,personal,True,Estilo original
+Factura pendiente de pago,Trabajo,otro,False,Estilo original
+Oferta exclusiva solo por hoy,Publicidad,publicidad,True,Estilo original
+Actualiza tu cuenta bancaria,Spam,spam,True,Estilo original
+Informe semanal del proyecto,Trabajo,trabajo,True,Estilo original
+"Hola, ¿cómo estás?",Personal,personal,True,Estilo original
+Te invito a la fiesta del sábado,Personal,personal,True,Ejemplos y formato explícito
+Recordatorio de reunión con cliente,Trabajo,trabajo,True,Ejemplos y formato explícito
+¡Compra ahora y recibe 50% de descuento!,Publicidad,publicidad,True,Ejemplos y formato explícito
+"Has ganado un iPhone, haz clic aquí",Spam,publicidad,False,Ejemplos y formato explícito
+¿Podemos almorzar mañana?,Personal,personal,True,Ejemplos y formato explícito
+Factura pendiente de pago,Trabajo,trabajo,True,Ejemplos y formato explícito
+Oferta exclusiva solo por hoy,Publicidad,publicidad,True,Ejemplos y formato explícito
+Actualiza tu cuenta bancaria,Spam,trabajo,False,Ejemplos y formato explícito
+Informe semanal del proyecto,Trabajo,trabajo,True,Ejemplos y formato explícito
+"Hola, ¿cómo estás?",Personal,trabajo,False,Ejemplos y formato explícito
+Te invito a la fiesta del sábado,Personal,publicidad,False,Rol experto + pasos
+Recordatorio de reunión con cliente,Trabajo,trabajo,True,Rol experto + pasos
+¡Compra ahora y recibe 50% de descuento!,Publicidad,otro,False,Rol experto + pasos
+"Has ganado un iPhone, haz clic aquí",Spam,publicidad,False,Rol experto + pasos
+¿Podemos almorzar mañana?,Personal,personal,True,Rol experto + pasos
+Factura pendiente de pago,Trabajo,trabajo,True,Rol experto + pasos
+Oferta exclusiva solo por hoy,Publicidad,publicidad,True,Rol experto + pasos
+Actualiza tu cuenta bancaria,Spam,publicidad,False,Rol experto + pasos
+Informe semanal del proyecto,Trabajo,trabajo,True,Rol experto + pasos
+"Hola, ¿cómo estás?",Personal,personal,True,Rol experto + pasos
+Te invito a la fiesta del sábado,Personal,personal,True,Definiciones + sin explicaciones
+Recordatorio de reunión con cliente,Trabajo,publicidad,False,Definiciones + sin explicaciones
+¡Compra ahora y recibe 50% de descuento!,Publicidad,publicidad,True,Definiciones + sin explicaciones
+"Has ganado un iPhone, haz clic aquí",Spam,publicidad,False,Definiciones + sin explicaciones
+¿Podemos almorzar mañana?,Personal,personal,True,Definiciones + sin explicaciones
+Factura pendiente de pago,Trabajo,trabajo,True,Definiciones + sin explicaciones
+Oferta exclusiva solo por hoy,Publicidad,publicidad,True,Definiciones + sin explicaciones
+Actualiza tu cuenta bancaria,Spam,publicidad,False,Definiciones + sin explicaciones
+Informe semanal del proyecto,Trabajo,trabajo,True,Definiciones + sin explicaciones
+"Hola, ¿cómo estás?",Personal,personal,True,Definiciones + sin explicaciones

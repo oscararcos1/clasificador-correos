@@ -1,11 +1,11 @@
 correo,categoría real,predicción,correcto
-Te invito a la fiesta del sábado,Personal,"Social (no trabajo, no publicidad)",False
-Recordatorio de reunión con cliente,Trabajo,Reunión,False
-¡Compra ahora y recibe 50% de descuento!,Publicidad,Publicidad,True
-"Has ganado un iPhone, haz clic aquí",Spam,Spam,True
-¿Podemos almorzar mañana?,Personal,Personal,True
-Factura pendiente de pago,Trabajo,Pagos,False
-Oferta exclusiva solo por hoy,Publicidad,Publicidad,True
-Actualiza tu cuenta bancaria,Spam,Cuenta (bancaria),False
-Informe semanal del proyecto,Trabajo,Trabajo,True
-"Hola, ¿cómo estás?",Personal,Personal,True
+Te invito a la fiesta del sábado,Personal,personal,True
+Recordatorio de reunión con cliente,Trabajo,otro,False
+¡Compra ahora y recibe 50% de descuento!,Publicidad,publicidad,True
+"Has ganado un iPhone, haz clic aquí",Spam,spam,True
+¿Podemos almorzar mañana?,Personal,personal,True
+Factura pendiente de pago,Trabajo,otro,False
+Oferta exclusiva solo por hoy,Publicidad,publicidad,True
+Actualiza tu cuenta bancaria,Spam,otro,False
+Informe semanal del proyecto,Trabajo,trabajo,True
+"Hola, ¿cómo estás?",Personal,personal,True

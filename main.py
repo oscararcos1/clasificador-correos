@@ -2,8 +2,10 @@ import ollama
 import pandas as pd
 import gradio as gr
 from sklearn.metrics import classification_report
-import io
+import matplotlib.pyplot as plt
+import seaborn as sns
 
+# Diccionario de Prompts
 prompts_dict = {
     "Estilo original": """Clasifica el siguiente correo electrónico en una de las siguientes categorías: Trabajo, Personal, Publicidad, Spam.
 Devuelve solo el nombre de la categoría.
@@ -46,103 +48,126 @@ No expliques tu razonamiento ni justifiques tu respuesta. Devuelve únicamente e
 Correo: {correo}"""
 }
 
+# Categorías válidas y función de limpieza
+CATEGORIAS_VALIDAS = ["trabajo", "personal", "publicidad", "spam"]
 
-# Función para clasificar un correo
+def limpiar_categoria(respuesta):
+    respuesta = respuesta.strip().lower()
+    for cat in CATEGORIAS_VALIDAS:
+        if cat in respuesta:
+            return cat
+    return "otro"
+
+# Clasificación individual
 def clasificar_correo(correo, estilo="Estilo original"):
     prompt = prompts_dict[estilo].format(correo=correo)
-    
     respuesta = ollama.chat(
         model="mistral",
         messages=[{"role": "user", "content": prompt}]
     )
     return respuesta['message']['content'].strip()
 
-def interfaz_llm(correo, estilo):
-    return clasificar_correo(correo, estilo)
-
-# Interacción desde consola
-#if __name__ == "__main__":
- #   correo_input = input("Pega el correo aquí: ")
-  #  categoria = clasificar_correo(correo_input)
-   # print(f"Categoría: {categoria}")
-
+# Validación con test_correos.csv
 def validar_modelo():
     df = pd.read_csv("test_correos.csv")
-    y_true = []
-    y_pred = []
-    resultados = []  # ← Esta es la lista que estaba faltando
+    y_true, y_pred, resultados = [], [], []
 
     for _, row in df.iterrows():
         pred = clasificar_correo(row['correo'])
+        pred_limpia = limpiar_categoria(pred)
         y_true.append(row['categoria'].lower())
-        y_pred.append(pred.lower())
+        y_pred.append(pred_limpia)
 
         resultados.append({
             "correo": row['correo'],
             "categoría real": row['categoria'],
-            "predicción": pred,
-            "correcto": pred.lower() == row['categoria'].lower()
+            "predicción": pred_limpia,
+            "correcto": pred_limpia == row['categoria'].lower()
         })
 
-        print(f"Real: {row['categoria']} | Predicho: {pred}")
+        print(f"Real: {row['categoria']} | Predicho: {pred_limpia}")
 
     print("\n📊 Reporte de clasificación:")
     print(classification_report(y_true, y_pred))
 
-    # Guardar en archivo CSV
-    resultados_df = pd.DataFrame(resultados)
-    resultados_df.to_csv("resultados_validacion.csv", index=False)
+    pd.DataFrame(resultados).to_csv("resultados_validacion.csv", index=False)
     print("✅ Resultados guardados en resultados_validacion.csv")
 
-# Ejecuta esta función si quieres validar:
-validar_modelo()
-
+# Validación desde archivo CSV subido
 def interfaz_validacion(archivo_csv):
     df = pd.read_csv(archivo_csv.name)
-    y_true = []
-    y_pred = []
-    resultados = []
+    y_true, y_pred, resultados = [], [], []
 
     for _, row in df.iterrows():
         pred = clasificar_correo(row['correo'])
+        pred_limpia = limpiar_categoria(pred)
         y_true.append(row['categoria'].lower())
-        y_pred.append(pred.lower())
+        y_pred.append(pred_limpia)
         resultados.append({
             "correo": row['correo'],
             "categoría real": row['categoria'],
-            "predicción": pred,
-            "correcto": pred.lower() == row['categoria'].lower()
+            "predicción": pred_limpia,
+            "correcto": pred_limpia == row['categoria'].lower()
         })
 
-    # Reporte de clasificación como texto plano
     reporte = classification_report(y_true, y_pred, digits=2)
-
-    # Guardar archivo local
     pd.DataFrame(resultados).to_csv("resultados_validacion.csv", index=False)
-
-    # Retornar tabla + reporte en string
     return pd.DataFrame(resultados), reporte
 
-#def interfaz_llm(correo):
- #   categoria = clasificar_correo(correo)
-  #  return f"Categoría: {categoria}"
+# Comparar todos los prompts
+def comparar_prompts():
+    resultados_totales = []
+    df = pd.read_csv("test_correos.csv")
 
-# Lanza la app web local
+    for estilo in prompts_dict:
+        print(f"\n🔍 Probando estilo de prompt: {estilo}")
+        for _, row in df.iterrows():
+            pred = clasificar_correo(row['correo'], estilo=estilo)
+            pred_limpia = limpiar_categoria(pred)
+            resultados_totales.append({
+                "correo": row['correo'],
+                "categoria_real": row['categoria'],
+                "prediccion": pred_limpia,
+                "correcto": pred_limpia == row['categoria'].lower(),
+                "prompt": estilo
+            })
+
+    pd.DataFrame(resultados_totales).to_csv("comparacion_prompts.csv", index=False)
+    print("✅ Resultados guardados en comparacion_prompts.csv")
+
+# Gráfico comparativo
+def graficar_metricas_prompts():
+    df = pd.read_csv("comparacion_prompts.csv")
+    resumen = df.groupby("prompt").agg({"correcto": ["mean", "count"]}).reset_index()
+    resumen.columns = ["prompt", "accuracy", "n_ejemplos"]
+    resumen["accuracy"] *= 100
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.barplot(data=resumen, x="prompt", y="accuracy", palette="Set2", ax=ax)
+    ax.set_title("Precisión por estilo de prompt")
+    ax.set_ylabel("Accuracy (%)")
+    ax.set_xlabel("Prompt")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    return fig
+
+# Interfaz Gradio
+def interfaz_llm(correo, estilo):
+    return clasificar_correo(correo, estilo)
+
 demo = gr.TabbedInterface(
     interface_list=[
         gr.Interface(
             fn=interfaz_llm,
             inputs=[
                 gr.Textbox(label="Pega el correo aquí"),
-                gr.Dropdown(label="Estilo de Prompt", choices=list(prompts_dict.keys())),
+                gr.Dropdown(label="Estilo de Prompt", choices=list(prompts_dict.keys()))
             ],
             outputs=gr.Textbox(label="Categoría"),
             title="Clasificador de Correos con IA",
             description="Clasifica correos usando diferentes estrategias de prompt engineering.",
             theme="soft"
-        )
-        ,
-        
+        ),
         gr.Interface(
             fn=interfaz_validacion,
             inputs=gr.File(label="Sube un archivo CSV con columnas 'correo' y 'categoria'"),
@@ -153,10 +178,21 @@ demo = gr.TabbedInterface(
             title="Validador por Archivo CSV",
             description="Sube tu archivo test_correos.csv para evaluar el modelo y ver su desempeño.",
             theme="soft"
+        ),
+        gr.Interface(
+            fn=graficar_metricas_prompts,
+            inputs=[],
+            outputs=gr.Plot(label="Gráfico de Accuracy por Prompt"),
+            title="Gráfico Comparativo",
+            description="Visualiza el rendimiento de cada prompt en precisión.",
+            theme="soft"
         )
     ],
-    tab_names=["Clasificador Manual", "Validación por CSV"]
+    tab_names=["Clasificador Manual", "Validación por CSV", "Gráfico Comparativo"]
 )
 
-demo.launch(share=True)
-
+# Ejecución
+if __name__ == "__main__":
+    comparar_prompts()
+    graficar_metricas_prompts()
+    demo.launch(share=True)
